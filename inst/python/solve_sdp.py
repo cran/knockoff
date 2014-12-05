@@ -31,9 +31,16 @@ def solve_sdp(G):
 
 
 if __name__ == '__main__':
+    import argparse, sys
     import json
-    import sys
     
-    G = json.load(sys.stdin)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('infile', nargs='?', type=argparse.FileType('r'),
+                        default=sys.stdin)
+    parser.add_argument('outfile', nargs='?', type=argparse.FileType('w'),
+                        default=sys.stdout)
+    args = parser.parse_args()
+    
+    G = json.load(args.infile)
     s = solve_sdp(G)
-    json.dump(s.tolist(), sys.stdout)
+    json.dump(s.tolist(), args.outfile)

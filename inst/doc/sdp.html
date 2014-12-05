@@ -11,7 +11,7 @@
 
 <meta name="date" content="2014-12-15" />
 
-<title>Using the Knockoff Filter</title>
+<title>SDP Knockoffs</title>
 
 
 
@@ -51,73 +51,54 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 
 <div id="header">
-<h1 class="title">Using the Knockoff Filter</h1>
+<h1 class="title">SDP Knockoffs</h1>
 <h4 class="date"><em>2014-12-15</em></h4>
 </div>
 
 
-<p>This vignette illustrates the basic and advanced usage of <code>knockoff.filter</code>. For simplicity, we will use synthetic data constructed such that the true coefficient vector <span class="math">\(\beta\)</span> has very few nonzero entries.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Problem parameters</span>
-n =<span class="st"> </span><span class="dv">600</span>          <span class="co"># number of observations</span>
-p =<span class="st"> </span><span class="dv">200</span>          <span class="co"># number of variables</span>
-k =<span class="st"> </span><span class="dv">30</span>           <span class="co"># number of variables with nonzero coefficients</span>
-amplitude =<span class="st"> </span><span class="fl">3.5</span>  <span class="co"># signal amplitude (for noise level = 1)</span>
-
-<span class="co"># Problem data</span>
-X =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(n*p), <span class="dt">nrow=</span>n, <span class="dt">ncol=</span>p)
-nonzero =<span class="st"> </span><span class="kw">sample</span>(p, k)
-beta =<span class="st"> </span>amplitude *<span class="st"> </span>(<span class="dv">1</span>:p %in%<span class="st"> </span>nonzero)
-y.sample &lt;-<span class="st"> </span>function() X %*%<span class="st"> </span>beta +<span class="st"> </span><span class="kw">rnorm</span>(n)</code></pre>
-<div id="first-examples" class="section level2">
-<h2>First examples</h2>
-<p>To begin, we call <code>knockoff.filter</code> with all the default settings.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(knockoff)
-
-y =<span class="st"> </span><span class="kw">y.sample</span>()
-result =<span class="st"> </span><span class="kw">knockoff.filter</span>(X, y)
-<span class="kw">print</span>(result)</code></pre>
-<pre><code>## Call:
-## knockoff.filter(X = X, y = y)
-## 
-## Selected variables:
-##  [1]   7  13  16  17  18  23  34  43  50  52  53  58  60  61  63  65  67
-## [18]  76  85  86  87  88  96  97 101 116 128 131 140 152 165 170 177 179
-## [35] 187 194</code></pre>
-<p>The false discovery proportion is</p>
-<pre class="sourceCode r"><code class="sourceCode r">fdp &lt;-<span class="st"> </span>function(selected) <span class="kw">sum</span>(beta[selected] ==<span class="st"> </span><span class="dv">0</span>) /<span class="st"> </span><span class="kw">max</span>(<span class="dv">1</span>, <span class="kw">length</span>(selected))
-<span class="kw">fdp</span>(result$selected)</code></pre>
-<pre><code>## [1] 0.1666667</code></pre>
-<p>This is below the default FDR target of 0.20.</p>
-<p>By default, the knockoff filter uses a test statistic based on the lasso. Specifically, it uses the statistic <code>knockoff.stat.lasso_signed_max</code>, which computes <span class="math">\[
-W_j = \max(Z_j, \tilde{Z}_j) \cdot \mathrm{sgn}(Z_j - \tilde{Z}_j),
-\]</span> where <span class="math">\(Z_j\)</span> and <span class="math">\(\tilde{Z}_j\)</span> are the maximum values of the regularization parameter <span class="math">\(\lambda\)</span> at which the <span class="math">\(j\)</span>th variable and its knockoff, respectively, enter the lasso model.</p>
-<p>The knockoff package includes several other test statistics, all of which have names prefixed with <code>knockoff.stat</code>. In the next snippet, we use a statistic based on forward selection. We also set a lower target FDR of 0.10.</p>
-<pre class="sourceCode r"><code class="sourceCode r">result =<span class="st"> </span><span class="kw">knockoff.filter</span>(X, y, <span class="dt">fdr =</span> <span class="fl">0.10</span>, <span class="dt">statistic =</span> knockoff.stat.fs)
-<span class="kw">fdp</span>(result$selected)</code></pre>
-<pre><code>## [1] 0.1176471</code></pre>
-</div>
-<div id="user-defined-test-statistics" class="section level2">
-<h2>User-defined test statistics</h2>
-<p>In addition to using the predefined test statistics, it is also possible to define your own test statistics. To illustrate this possibility, we implement one of the simplest test statistics from the knockoff filter paper, namely <span class="math">\[
-W_j = \left|X_j^\top \cdot y\right| - \left|\tilde{X}_j^\top \cdot y\right|.
-\]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r">my_knockoff_stat &lt;-<span class="st"> </span>function(X, X_ko, y) {
-  <span class="kw">abs</span>(<span class="kw">t</span>(X) %*%<span class="st"> </span>y) -<span class="st"> </span><span class="kw">abs</span>(<span class="kw">t</span>(X_ko) %*%<span class="st"> </span>y)
-}
-result =<span class="st"> </span><span class="kw">knockoff.filter</span>(X, y, <span class="dt">statistic =</span> my_knockoff_stat)
-<span class="kw">fdp</span>(result$selected)</code></pre>
-<pre><code>## [1] 0.2307692</code></pre>
-</div>
-<div id="advanced-usage" class="section level2">
-<h2>Advanced usage</h2>
-<p>The function <code>knockoff.filter</code> is a wrapper around several simpler functions that</p>
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>The knockoff package supports two styles of knockoff variables, <em>equicorrelated</em> knockoffs (the default) and <em>semidefinite programming</em> (SDP) knockoffs. Though more computationally expensive, the SDP knockoffs are statistically superior by having higher power. Unfortunately, the R programming environment has poor support for semidefinite programming. To create SDP knockoffs, this package relies on the Python library <a href="http://cvxpy.org">CVXPY</a>.</p>
+<p>The knockoff package will automatically invoke the Python interpreter to create SDP knockoffs provided that (1) you have a Python installation with CVXPY and (2) R can find your Python interpreter. Thus, to use SDP knockoffs you should:</p>
 <ol style="list-style-type: decimal">
-<li>Construct knockoff variables (<code>knockoff.create</code>)</li>
-<li>Compute the test statistic <span class="math">\(W\)</span> (various functions with prefix <code>knockoff.stat</code>)</li>
-<li>Compute the threshold for variable selection (<code>knockoff.threshold</code>)</li>
+<li><strong>Install Python and CVXPY</strong></li>
 </ol>
-<p>These functions may be called directly if desired. For more information, see the documentation for the individual functions.</p>
-<p><strong>Warning</strong>. The high-level function <code>knockoff.filter</code> will automatically normalize the columns of the input matrix (unless this behavior is explicitly disabled). However, all other functions in this package assume that the columns of the input matrix have unit Euclidean norm. Please be aware of these conventions.</p>
+<p>On Unix platforms this is usually straightforward. If you don’t have a Python installation, follow the <a href="http://www.cvxpy.org/en/latest/install/index.html">instructions included with CVXPY</a>. If you already have Python (along with NumPy and SciPy), running <code>pip install cvxpy</code> will likely work.</p>
+<p>On Windows, matters are more complicated. You can attempt the <a href="http://www.cvxpy.org/en/latest/install/index.html#windows">instructions for Windows included with CVXPY</a>. Alternatively, you can skip the compilation process by using pre-compiled binaries, according to the alternative installation instructions provided below.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Verify that R can find the Python interpretator</strong></li>
+</ol>
+<p>Launch on your R environment. On Unix, run</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system</span>(<span class="st">'which python'</span>)</code></pre>
+<p>or on Windows, run</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system</span>(<span class="st">'where python'</span>)</code></pre>
+<p>You should see the path to your Python installation. If not, adjust your <code>PATH</code> environment variable appropriately.</p>
+</div>
+<div id="installation-instructions-for-windows" class="section level2">
+<h2>Installation instructions for Windows</h2>
+<p>These alternative instructions for MS Windows use pre-compiled binaries.</p>
+<ol style="list-style-type: decimal">
+<li>Download and install <a href="https://www.python.org/downloads/release/python-279/">Python 2.7</a></li>
+</ol>
+<p><strong>Note</strong>: Even if you are running 64-bit Windows, make sure to use the 32-bit Python binaries. Due to a <a href="https://github.com/cvxgrp/cvxpy/issues/102">bug</a> in <code>cvxopt</code>, CVXPY is effectively broken on 64-bit Windows.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Download and install the following binaries created by <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">Christoph Gohlke</a>:</li>
+</ol>
+<ul>
+<li>NumPy-MKL</li>
+<li>SciPy</li>
+<li>ECOS</li>
+<li>cvxopt</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li><p>Run the following commands</p>
+<pre><code>pip install toolz
+pip install cvxpy --no-deps</code></pre></li>
+</ol>
+<p>You should now have a working CVXPY installation.</p>
+<p><strong>Note</strong>: At the time of this writing, there are no pre-compiled binaries for SCS, an optional dependency of CVXPY. If SCS is not installed, CVXPY will emit warnings but will nonetheless function correctly. However, CVXPY 0.2.15 and older contain a bug that causes the warning logic to fail. If you encounter this problem, open the file</p>
+<pre><code>&lt;python root&gt;\Lib\site-packages\cvxpy\problems\solvers\scs_intf.py</code></pre>
+<p>and add the line <code>import warnings</code> as indicated <a href="https://github.com/cvxgrp/cvxpy/blame/87a001910e64444efd16b33c206f4a1fbab3b8b2/cvxpy/problems/solvers/scs_intf.py#L22">here</a>.</p>
 </div>
 
 

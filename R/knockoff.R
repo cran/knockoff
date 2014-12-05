@@ -34,6 +34,11 @@ NULL
 #' \code{knockoff.stat.fs_omp}. It is also possible to provide your own test 
 #' statistic (for an example, see the vignette).
 #' 
+#' To use SDP knockoffs, you must have a Python installation with 
+#' CVXPY. For more information, see the vignette on SDP knockoffs:
+#' 
+#' \code{vignette('sdp', package='knockoff')}
+#' 
 #' @export
 knockoff.filter <- function(X, y, fdr=0.20, statistic=NULL, 
                             threshold=c('knockoff','knockoff+'),
@@ -78,7 +83,7 @@ knockoff.filter <- function(X, y, fdr=0.20, statistic=NULL,
   
   selected = which(W >= t)
   if (!is.null(X.names))
-    names(selected) = X.names(selected)
+    names(selected) = X.names[selected]
   
   # Package up the results.
   structure(list(call = match.call(),

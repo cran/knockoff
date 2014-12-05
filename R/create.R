@@ -7,6 +7,11 @@
 #' @param randomized whether the knockoffs are deterministic or randomized
 #' @return The n-by-p knockoff matrix
 #' 
+#' @details To use SDP knockoffs, you must have a Python installation with 
+#' CVXPY. For more information, see the vignette on SDP knockoffs:
+#'
+#' \code{vignette('sdp', package='knockoff')}
+#' 
 #' @export
 knockoff.create <- function(X, method=c('equicorrelated','sdp'), randomized=F) {
   fn = switch(match.arg(method), 
@@ -103,10 +108,19 @@ decompose <- function(X, randomized) {
 # serialization format.
 solve_sdp <- function(G) {
   source_file = system.file('python', 'solve_sdp.py', package='knockoff')
+  out_file = tempfile(pattern='knockoff', fileext='json')
+  on.exit({
+    if (file.exists(out_file))
+      file.remove(out_file)
+  })
+  
   G.json = toJSON(G, collapse=' ')
-  s.json = system2('python', source_file, stdout=T, input=G.json)
-  if (!is.null(attr(s.json, 'status')))
+  status = system2('python',
+                   paste(shQuote(source_file), '-', shQuote(out_file)),
+                   input = G.json)
+  if (status != 0)
     stop('Error calling Python SDP solver.')
+  s.json = paste(readLines(out_file, warn=F))
   s = fromJSON(s.json)
   return(s)
 }

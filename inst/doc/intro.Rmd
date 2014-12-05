@@ -1,6 +1,5 @@
 ---
 title: "Using the Knockoff Filter"
-author: "Evan Patterson"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >

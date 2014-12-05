@@ -18,4 +18,10 @@ The n-by-p knockoff matrix
 \description{
 Creates knockoff variables for the original variables.
 }
+\details{
+To use SDP knockoffs, you must have a Python installation with
+CVXPY. For more information, see the vignette on SDP knockoffs:
+
+\code{vignette('sdp', package='knockoff')}
+}
 

@@ -43,5 +43,10 @@ The default test statistic is \code{knockoff.stat.lasso_signed_max}.
 Other useful test statistics include \code{knockoff.stat.fs} and
 \code{knockoff.stat.fs_omp}. It is also possible to provide your own test
 statistic (for an example, see the vignette).
+
+To use SDP knockoffs, you must have a Python installation with
+CVXPY. For more information, see the vignette on SDP knockoffs:
+
+\code{vignette('sdp', package='knockoff')}
 }
 
