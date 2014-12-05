@@ -1,0 +1,16 @@
+Package: knockoff
+Type: Package
+Title: Knockoff Filter
+Version: 0.1
+Date: 2014-12-05
+Author: Rina Barber, Emmanuel Candes, Evan Patterson
+Maintainer: Evan Patterson <epatters@stanford.edu>
+Description: The knockoff filter for controlling the false discovery rate
+License: GPL-3
+Imports: glmnet, RJSONIO
+Suggests: lars, knitr, testthat
+VignetteBuilder: knitr
+Packaged: 2014-12-06 00:33:17 UTC; epatters
+NeedsCompilation: no
+Repository: CRAN
+Date/Publication: 2014-12-06 15:09:57
