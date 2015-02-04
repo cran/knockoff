@@ -11,16 +11,26 @@
 #' @param X original design matrix
 #' @param X_ko knockoff matrix
 #' @param y response vector
-#' @param method either 'glmnet' or 'lars'
-#' @return The statistic W
+#' @param method either 'glmnet' or 'lars' (see Details)
+#' @param ... additional arguments specific to 'glmnet' or 'lars' (see Details)
+#' @return The statistic \eqn{W}
 #' 
-#' @details By default, the glmnet package is used.
+#' @details This function can use either the \code{glmnet} or the \code{lars}
+#' package to compute the lasso path. The \code{lars} package computes the lasso
+#' path exactly, while \code{glmnet} approximates it using a fine grid of 
+#' \eqn{\lambda}'s. For large matrics, \code{glmnet} can be much faster than
+#' \code{lars}. By default, \code{glmnet} is used.
+#' 
+#' If \code{method} is set to \code{'glmnet'}, the \code{nlambda} parameter can 
+#' be used to control the granularity of the grid of \eqn{\lambda}'s. The 
+#' default value of \code{nlambda} is \code{5*p}, where \code{p} is the number
+#' of columns of \code{X}.
 #' 
 #' @rdname knockoff.stat.lasso
 #' @export
 knockoff.stat.lasso_difference <- function(X, X_ko, y,
-                                           method=c('glmnet','lars')) {
-  Z = lasso_max_lambda(cbind(X, X_ko), y, method)
+                                           method=c('glmnet','lars'), ...) {
+  Z = lasso_max_lambda(cbind(X, X_ko), y, method, ...)
   p = ncol(X)
   orig = 1:p
   Z[orig] - Z[orig+p]
@@ -29,8 +39,8 @@ knockoff.stat.lasso_difference <- function(X, X_ko, y,
 #' @rdname knockoff.stat.lasso
 #' @export
 knockoff.stat.lasso_signed_max <- function(X, X_ko, y,
-                                           method=c('glmnet','lars')) {
-  Z = lasso_max_lambda(cbind(X, X_ko), y, method)
+                                           method=c('glmnet','lars'), ...) {
+  Z = lasso_max_lambda(cbind(X, X_ko), y, method, ...)
   p = ncol(X)
   orig = 1:p
   pmax(Z[orig], Z[orig+p]) * sign(Z[orig] - Z[orig+p])
@@ -58,7 +68,7 @@ lasso_max_lambda_glmnet <- function(X, y, nlambda=NULL) {
     stop('glmnet is not installed', call.=F)
   
   n = nrow(X); p = ncol(X)
-  if (is.null(nlambda)) nlambda = 3*p
+  if (is.null(nlambda)) nlambda = 5*p
   
   lambda_max = max(abs(t(X) %*% y)) / n
   lambda_min = lambda_max / 2e3

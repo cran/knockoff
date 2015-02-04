@@ -3,7 +3,7 @@ title: "SDP Knockoffs"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{SDP Knockoffs}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -46,13 +46,19 @@ These alternative instructions for MS Windows use pre-compiled binaries.
 
 **Note**: Even if you are running 64-bit Windows, make sure to use the 32-bit Python binaries. Due to a [bug][bug-win64] in `cvxopt`, CVXPY is effectively broken on 64-bit Windows.
 
-2) Download and install the following binaries created by [Christoph Gohlke][gohlke]:
+2) Prepend the string
+```
+C:\Python27\;C:\Python27\Scripts\
+```
+to your `PATH` environment variable
+
+3) Download and install the following binaries created by [Christoph Gohlke][gohlke]:
   - NumPy-MKL
   - SciPy
   - ECOS
   - cvxopt
   
-3) Run the following commands
+4) Open the Windows command prompt (not the Python interpreter) and run the following commands:
 ```
 pip install toolz
 pip install cvxpy --no-deps
@@ -62,7 +68,7 @@ You should now have a working CVXPY installation.
 
 **Note**: At the time of this writing, there are no pre-compiled binaries for SCS, an optional dependency of CVXPY. If SCS is not installed, CVXPY will emit warnings but will nonetheless function correctly. However, CVXPY 0.2.15 and older contain a bug that causes the warning logic to fail. If you encounter this problem, open the file
 ```
-<python root>\Lib\site-packages\cvxpy\problems\solvers\scs_intf.py
+C:\Python27\Lib\site-packages\cvxpy\problems\solvers\scs_intf.py
 ```
 and add the line `import warnings` as indicated [here][bug-cvxpy-warnings].
 

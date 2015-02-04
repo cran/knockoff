@@ -1,7 +1,7 @@
 library(R.matlab)
 
-# FIXME: MATLAB path hardcoded.
-Matlab$startServer(matlab='/Applications/MATLAB_R2014b.app/bin/matlab')
+# Note: This command requires that the 'matlab' binary be on the PATH.
+Matlab$startServer()
 
 matlab <- Matlab()
 if (!isOpen(matlab))

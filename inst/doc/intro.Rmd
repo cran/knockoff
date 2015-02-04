@@ -74,6 +74,16 @@ result = knockoff.filter(X, y, statistic = my_knockoff_stat)
 fdp(result$selected)
 ```
 
+As another example, we show how to customize the grid of $\lambda$'s used to compute the lasso path in the default test statistic.
+
+```{r}
+my_lasso_stat <- function(...) knockoff.stat.lasso_signed_max(..., nlambda=10*p)
+result = knockoff.filter(X, y, statistic = my_lasso_stat)
+fdp(result$selected)
+```
+
+For more information about the `nlambda` parameter, see the documentation for `knockoff.stat.lasso_signed_max`.
+
 Advanced usage
 --------------
 

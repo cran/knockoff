@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="date" content="2014-12-15" />
+<meta name="date" content="2015-02-04" />
 
 <title>Using the Knockoff Filter</title>
 
@@ -52,7 +52,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 <div id="header">
 <h1 class="title">Using the Knockoff Filter</h1>
-<h4 class="date"><em>2014-12-15</em></h4>
+<h4 class="date"><em>2015-02-04</em></h4>
 </div>
 
 
@@ -107,6 +107,12 @@ W_j = \left|X_j^\top \cdot y\right| - \left|\tilde{X}_j^\top \cdot y\right|.
 result =<span class="st"> </span><span class="kw">knockoff.filter</span>(X, y, <span class="dt">statistic =</span> my_knockoff_stat)
 <span class="kw">fdp</span>(result$selected)</code></pre>
 <pre><code>## [1] 0.2307692</code></pre>
+<p>As another example, we show how to customize the grid of <span class="math">\(\lambda\)</span>’s used to compute the lasso path in the default test statistic.</p>
+<pre class="sourceCode r"><code class="sourceCode r">my_lasso_stat &lt;-<span class="st"> </span>function(...) <span class="kw">knockoff.stat.lasso_signed_max</span>(..., <span class="dt">nlambda=</span><span class="dv">10</span>*p)
+result =<span class="st"> </span><span class="kw">knockoff.filter</span>(X, y, <span class="dt">statistic =</span> my_lasso_stat)
+<span class="kw">fdp</span>(result$selected)</code></pre>
+<pre><code>## [1] 0.1666667</code></pre>
+<p>For more information about the <code>nlambda</code> parameter, see the documentation for <code>knockoff.stat.lasso_signed_max</code>.</p>
 </div>
 <div id="advanced-usage" class="section level2">
 <h2>Advanced usage</h2>

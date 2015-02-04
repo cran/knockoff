@@ -4,7 +4,7 @@
 #' 
 #' @param X normalized n-by-p design matrix (n >= 2p)
 #' @param method either 'equicorrelated' or 'sdp'
-#' @param randomized whether the knockoffs are deterministic or randomized
+#' @param randomize whether the knockoffs are deterministic or randomized
 #' @return The n-by-p knockoff matrix
 #' 
 #' @details To use SDP knockoffs, you must have a Python installation with 
@@ -13,17 +13,17 @@
 #' \code{vignette('sdp', package='knockoff')}
 #' 
 #' @export
-knockoff.create <- function(X, method=c('equicorrelated','sdp'), randomized=F) {
+knockoff.create <- function(X, method=c('equicorrelated','sdp'), randomize=F) {
   fn = switch(match.arg(method), 
               equicorrelated = create_equicorrelated,
               sdp = create_sdp)
-  fn(X, randomized)
+  fn(X, randomize)
 }
 
 # Create equicorrelated knockoffs.
-create_equicorrelated <- function(X, randomized) {
+create_equicorrelated <- function(X, randomize) {
   # Compute SVD and U_perp.
-  X.svd = decompose(X, randomized)
+  X.svd = decompose(X, randomize)
   
   # Set s = min(2 * smallest eigenvalue of X'X, 1), so that all the correlations
   # have the same value 1-s.
@@ -34,17 +34,18 @@ create_equicorrelated <- function(X, randomized) {
   s = min(2*lambda_min, 1)
   
   # Construct the knockoff according to Equation 1.4.
+  s_diff = pmax(0, 2*s - (s/X.svd$d)^2) # can be negative due to numerical error
   X_ko = (X.svd$u %*diag% (X.svd$d - s / X.svd$d) +
-          X.svd$u_perp %*diag% (sqrt(2*s - (s/X.svd$d)^2))) %*% t(X.svd$v)
+          X.svd$u_perp %*diag% sqrt(s_diff)) %*% t(X.svd$v)
 }
 
 # Create SDP knockoffs.
-create_sdp <- function(X, randomized) {
+create_sdp <- function(X, randomize) {
   if (!has_cvxpy())
     stop('To use SDP knockoffs, you must have Python and the CVXPY library.')
   
   # Compute SVD and U_perp.
-  X.svd = decompose(X, randomized)
+  X.svd = decompose(X, randomize)
   
   # Check for rank deficiency.
   tol = 1e-5
@@ -73,14 +74,14 @@ create_sdp <- function(X, randomized) {
 
 # Compute the SVD of X and construct an orthogonal matrix U_perp such that
 # U_perp * U = 0.
-decompose <- function(X, randomized) {
+decompose <- function(X, randomize) {
   n = nrow(X); p = ncol(X)
   stopifnot(n >= 2*p)
   
   result = canonical_svd(X)
   Q = qr.Q(qr(cbind(result$u, matrix(0,n,p))))
   u_perp = Q[,(p+1):(2*p)]
-  if (randomized) {
+  if (randomize) {
       Q = qr.Q(qr(rnorm_matrix(p,p)))
       u_perp = u_perp %*% Q
   }

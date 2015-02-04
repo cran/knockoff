@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="date" content="2014-12-15" />
+<meta name="date" content="2015-02-04" />
 
 <title>SDP Knockoffs</title>
 
@@ -52,7 +52,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 <div id="header">
 <h1 class="title">SDP Knockoffs</h1>
-<h4 class="date"><em>2014-12-15</em></h4>
+<h4 class="date"><em>2015-02-04</em></h4>
 </div>
 
 
@@ -82,6 +82,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ol>
 <p><strong>Note</strong>: Even if you are running 64-bit Windows, make sure to use the 32-bit Python binaries. Due to a <a href="https://github.com/cvxgrp/cvxpy/issues/102">bug</a> in <code>cvxopt</code>, CVXPY is effectively broken on 64-bit Windows.</p>
 <ol start="2" style="list-style-type: decimal">
+<li><p>Prepend the string</p>
+<pre><code>C:\Python27\;C:\Python27\Scripts\</code></pre>
+<p>to your <code>PATH</code> environment variable</p></li>
 <li>Download and install the following binaries created by <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">Christoph Gohlke</a>:</li>
 </ol>
 <ul>
@@ -90,14 +93,14 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>ECOS</li>
 <li>cvxopt</li>
 </ul>
-<ol start="3" style="list-style-type: decimal">
-<li><p>Run the following commands</p>
+<ol start="4" style="list-style-type: decimal">
+<li><p>Open the Windows command prompt (not the Python interpreter) and run the following commands:</p>
 <pre><code>pip install toolz
 pip install cvxpy --no-deps</code></pre></li>
 </ol>
 <p>You should now have a working CVXPY installation.</p>
 <p><strong>Note</strong>: At the time of this writing, there are no pre-compiled binaries for SCS, an optional dependency of CVXPY. If SCS is not installed, CVXPY will emit warnings but will nonetheless function correctly. However, CVXPY 0.2.15 and older contain a bug that causes the warning logic to fail. If you encounter this problem, open the file</p>
-<pre><code>&lt;python root&gt;\Lib\site-packages\cvxpy\problems\solvers\scs_intf.py</code></pre>
+<pre><code>C:\Python27\Lib\site-packages\cvxpy\problems\solvers\scs_intf.py</code></pre>
 <p>and add the line <code>import warnings</code> as indicated <a href="https://github.com/cvxgrp/cvxpy/blame/87a001910e64444efd16b33c206f4a1fbab3b8b2/cvxpy/problems/solvers/scs_intf.py#L22">here</a>.</p>
 </div>
 

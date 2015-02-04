@@ -44,3 +44,18 @@ random_problem <- function(n, p, k=NULL, amplitude=3) {
   y.sample <- function() X %*% beta + rnorm(n)
   list(X = X, beta = beta, y = y.sample(), y.sample = y.sample)
 }
+
+# Evaluate an expression with the given random seed, then restore the old seed.
+with_seed <- function(seed, expr) {
+  seed.old <- if (exists('.Random.seed')) .Random.seed else NULL
+  set.seed(seed)
+  on.exit({
+    if (is.null(seed.old)) {
+      if (exists('.Random.seed')) 
+        rm(.Random.seed, envir=.GlobalEnv)
+    } else {
+      .Random.seed <<- seed.old
+    }
+  })
+  expr
+}

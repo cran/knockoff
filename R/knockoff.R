@@ -21,6 +21,8 @@ NULL
 #'  knockoffs optimized using semidefinite programming ('sdp')
 #' @param normalize whether to scale the data columns to have unit norm. Only
 #'  disable this if your data is already normalized.
+#' @param randomize whether randomization is to be used when constructing
+#'  knockoffs and (when p < n < 2p) augmenting the model with extra rows
 #'
 #' @return An object of class "knockoff.result". This object is a list 
 #'  containing at least the following components:
@@ -43,7 +45,7 @@ NULL
 knockoff.filter <- function(X, y, fdr=0.20, statistic=NULL, 
                             threshold=c('knockoff','knockoff+'),
                             knockoffs=c('equicorrelated','sdp'),
-                            normalize=TRUE) {
+                            normalize=TRUE, randomize=FALSE) {
   # Parameter defaults.
   if (is.null(statistic)) statistic = knockoff.stat.lasso_signed_max
   
@@ -69,7 +71,11 @@ knockoff.filter <- function(X, y, fdr=0.20, statistic=NULL,
     u2 = X.svd$u[,(p+1):n]
     sigma = sqrt(mean((t(u2) %*% y)^2)) # = sqrt(RSS/(n-p))
     X = rbind(X, matrix(0, 2*p-n, p))
-    y = c(y, rnorm(2*p-n, sd=sigma))
+    if (randomize)
+      y.extra = rnorm(2*p-n, sd=sigma)
+    else
+      y.extra = with_seed(0, rnorm(2*p-n, sd=sigma))
+    y = c(y, y.extra)
   }
   
   # Normalize X, if necessary.
@@ -77,7 +83,7 @@ knockoff.filter <- function(X, y, fdr=0.20, statistic=NULL,
     X = normc(X)
   
   # Run the knockoff filter!
-  X.knockoff = knockoff.create(X, knockoffs)
+  X.knockoff = knockoff.create(X, method=knockoffs, randomize=randomize)
   W = statistic(X, X.knockoff, y)
   t = knockoff.threshold(W, fdr, threshold)
   

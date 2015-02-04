@@ -1,16 +1,19 @@
 Package: knockoff
 Type: Package
 Title: Knockoff Filter
-Version: 0.1.1
-Date: 2014-12-05
+Version: 0.2
+Date: 2015-02-04
 Author: Rina Foygel Barber, Emmanuel Candes, Evan Patterson
 Maintainer: Evan Patterson <epatters@stanford.edu>
-Description: The knockoff filter for controlling the false discovery rate
+Description: The knockoff filter is a procedure for controlling the false
+  discovery rate (FDR) when performing variable selection. For more information,
+  see the website below and the accompanying paper.
 License: GPL-3
+URL: http://statweb.stanford.edu/~candes/Knockoffs
 Imports: glmnet, RJSONIO
 Suggests: lars, knitr, testthat
 VignetteBuilder: knitr
-Packaged: 2014-12-15 18:52:01 UTC; epatters
+Packaged: 2015-02-05 03:51:24 UTC; epatters
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2014-12-20 07:44:08
+Date/Publication: 2015-02-05 06:50:08

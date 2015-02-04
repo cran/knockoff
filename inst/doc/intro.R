@@ -36,3 +36,8 @@ my_knockoff_stat <- function(X, X_ko, y) {
 result = knockoff.filter(X, y, statistic = my_knockoff_stat)
 fdp(result$selected)
 
+## ------------------------------------------------------------------------
+my_lasso_stat <- function(...) knockoff.stat.lasso_signed_max(..., nlambda=10*p)
+result = knockoff.filter(X, y, statistic = my_lasso_stat)
+fdp(result$selected)
+

@@ -1,0 +1,21 @@
+knockoff 0.2 (02/04/15)
+---------------------------------------
+Changes:
+* The knockoff procedure is now fully deterministic by default. Randomization 
+  can be enabled if desired.
+
+Fixes:
+* Fix numerical precision bug in equicorrelated knockoff creation
+
+knockoff 0.1.1 (12/19/14)
+---------------------------------------
+Features:
+* Expose the optional 'nlambda' parameter for lasso statistics
+
+Fixes:
+* Better documentation for SDP knockoffs
+* Minor bug fixes
+
+knockoff 0.1 (12/05/14)
+---------------------------------------
+Initial release!
