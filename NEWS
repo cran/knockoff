@@ -1,3 +1,9 @@
+knockoff 0.2.1
+---------------------------------------
+Documentation:
+* Add vignette showing how to analyze a real data set (on HIV drug resistance),
+  including all the preprocessing steps.
+
 knockoff 0.2 (02/04/15)
 ---------------------------------------
 Changes:
