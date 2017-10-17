@@ -14,7 +14,7 @@ knitr::knit_hooks$set(small.margin = function(before, options, envir) {
 })
 ```
 
-In this vignette, we illustrate the analysis of a real (non-simulated) data set, including all the pre-processing steps. We hope this example will guide the user in their own applications of the knockoff filter.
+In this vignette, we illustrate the analysis of a real (non-simulated) data set, including all the pre-processing steps. We hope this example will guide the user in their own applications of the knockoff filter. Throughout this example we will apply the knockoff filter in the Fixed-X scenario.
 
 The scientific goal is to determine which mutations of the Human Immunodeficiency Virus Type 1 (HIV-1) are associated with drug resistance. The data set, publicly available from the [Stanford HIV Drug Resistance Database][hivdb], was originally analyzed in [@rhee2006]. The analysis described here is exactly that carried out for the knockoff filter paper [@barber2014].
 
@@ -135,7 +135,7 @@ Before running either selection procedure, we perform some final pre-processing 
 ```{r knockoff}
 library(knockoff)
 
-knockoff_and_bhq <- function (X, y, fdr) {
+knockoff_and_bhq <- function (X, y, q) {
   # Log-transform the drug resistance measurements.
   y = log(y)
   
@@ -151,7 +151,8 @@ knockoff_and_bhq <- function (X, y, fdr) {
   X = X[,colSums(abs(cor(X)-1) < 1e-4) == 1]
   
   # Run the knockoff filter.
-  result = knockoff.filter(X, y, fdr = fdr, knockoffs = 'equicorrelated')
+  knock.gen = function(x) create.fixed(x, method='equi')
+  result = knockoff.filter(X, y, fdr=fdr, knockoffs=knock.gen, statistic=stat.glmnet_lambdasmax)
   knockoff_selected = names(result$selected)
   
   # Run BHq.

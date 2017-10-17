@@ -1,4 +1,4 @@
-## ----, echo=FALSE--------------------------------------------------------
+## ---- echo=FALSE---------------------------------------------------------
 knitr::knit_hooks$set(small.margin = function(before, options, envir) {
     if (before) par(mar = c(2,3,3,2))
 })
@@ -15,7 +15,7 @@ gene_df = read.delim(gene_url, na.string = c('NA', ''), stringsAsFactors = FALSE
 tsm_df = read.delim(tsm_url, header = FALSE, stringsAsFactors = FALSE)
 names(tsm_df) = c('Position', 'Mutations')
 
-## ----, results='asis', echo=FALSE----------------------------------------
+## ---- results='asis', echo=FALSE-----------------------------------------
 knitr::kable(head(gene_df[,4:20]))
 knitr::kable(head(tsm_df))
 
@@ -54,10 +54,10 @@ X = X[,colSums(X) != 0]
 # Extract response matrix.
 Y = gene_df[,4:(pos_start-1)]
 
-## ----, results='asis', echo=FALSE----------------------------------------
+## ---- results='asis', echo=FALSE-----------------------------------------
 knitr::kable(X[1:10,1:10])
 
-## ----, results='asis', echo=FALSE----------------------------------------
+## ---- results='asis', echo=FALSE-----------------------------------------
 knitr::kable(head(Y))
 
 ## ----small.margin=TRUE---------------------------------------------------
@@ -69,7 +69,7 @@ hist(log(Y[,1]), breaks='FD')
 ## ----knockoff------------------------------------------------------------
 library(knockoff)
 
-knockoff_and_bhq <- function (X, y, fdr) {
+knockoff_and_bhq <- function (X, y, q) {
   # Log-transform the drug resistance measurements.
   y = log(y)
   
@@ -85,7 +85,8 @@ knockoff_and_bhq <- function (X, y, fdr) {
   X = X[,colSums(abs(cor(X)-1) < 1e-4) == 1]
   
   # Run the knockoff filter.
-  result = knockoff.filter(X, y, fdr = fdr, knockoffs = 'equicorrelated')
+  knock.gen = function(x) create.fixed(x, method='equi')
+  result = knockoff.filter(X, y, fdr=fdr, knockoffs=knock.gen, statistic=stat.glmnet_lambdasmax)
   knockoff_selected = names(result$selected)
   
   # Run BHq.

@@ -1,22 +1,23 @@
-test_that('equicorrelated knockoffs have the right correlation structure', {
+test_that('Fixed-design equicorrelated knockoffs have the right correlation structure', {
   n = 20; p = 10
-  X = normc(rnorm_matrix(n,p))
-  X_ko_default = knockoff.create(X, 'equicorrelated', randomize=F)
-  X_ko_randomized = knockoff.create(X, 'equicorrelated', randomize=T)
+  X = knockoff:::normc(knockoff:::rnorm_matrix(n,p))
+  knock_variables_default = create.fixed(X, method='equi', randomize=F)
+  knock_variables_randomized = create.fixed(X, method='equi', randomize=T)
+  X = knock_variables_default$X
+  Xko_default = knock_variables_default$Xk
+  Xko_randomized = knock_variables_randomized$Xk
   
   G = t(X) %*% X
   s = min(2*min(eigen(G)$values), 1)
-  for (X_ko in list(X_ko_default, X_ko_randomized)) {
-    expect_equal(t(X_ko) %*% X_ko, G)
-    expect_equal(t(X) %*% X_ko, G - diag(s,p,p))
+  for (Xko in list(Xko_default, Xko_randomized)) {
+    expect_equal(t(Xko) %*% Xko, G)
+    expect_equal(t(X) %*% Xko, G - diag(s,p,p))
   }
 })
 
 # Test case from Weijie Su.
 test_that('equicorrelated knockoffs are created in numerically sensitive case', {
-  if (!requireNamespace('MASS', quietly=T))
-    skip('MASS not available')
-  
+
   n = 15; p = 5
   M = matrix(0, p, p)
   diag(M) = 1
@@ -28,30 +29,54 @@ test_that('equicorrelated knockoffs are created in numerically sensitive case', 
         M[i,j] <- 0.1
     }
   }
-  X = with_seed(2, MASS::mvrnorm(n, mu=rep(0,p), Sigma=M))
+  X = knockoff:::with_seed(2, matrix(rnorm(n*p),n) %*% chol(M) )
   k = 4
   
-  Z = normc(X[,-k])
-  Z_ko = knockoff.create(Z, 'equicorrelated')
+  Z = knockoff:::normc(X[,-k])
+  Z_ko = create.fixed(Z, method='equi', randomize=F)$Xk
   expect_false(any(is.nan(Z_ko)))
 })
 
-test_that('SDP knockoffs have the right correlation structure', {
+test_that('Fixed-design SDP knockoffs have the right correlation structure', {
   skip_on_cran()
-  if (!has_cvxpy())
-    skip('CVXPY not available')
   
   n = 20; p = 10
-  X = normc(rnorm_matrix(n,p))
-  X_ko_default = knockoff.create(X, 'sdp', randomize=F)
-  X_ko_randomized = knockoff.create(X, 'sdp', randomize=T)
+  X = knockoff:::normc(knockoff:::rnorm_matrix(n,p))
+  knock_variables_default = create.fixed(X, method='sdp', randomize=F)
+  knock_variables_randomized = create.fixed(X, method='sdp', randomize=T)
+  X = knock_variables_default$X
+  Xko_default = knock_variables_default$Xk
+  Xko_randomized = knock_variables_randomized$Xk
   
   offdiag <- function(A) A - diag(diag(A))
   G = t(X) %*% X
   tol = 1e-4
-  for (X_ko in list(X_ko_default, X_ko_randomized)) {
-    expect_equal(t(X_ko) %*% X_ko, G, tolerance=tol)
-    expect_equal(offdiag(t(X) %*% X_ko), offdiag(G), tolerance=tol)
-    expect_true(all(diag(t(X) %*% X_ko) < 1+tol))
+  for (Xko in list(Xko_default, Xko_randomized)) {
+    expect_equal(t(Xko) %*% Xko, G, tolerance=tol)
+    expect_equal(offdiag(t(X) %*% Xko), offdiag(G), tolerance=tol)
+    expect_true(all(diag(t(X) %*% Xko) < 1+tol))
   }
+})
+
+test_that('Gaussian equicorrelated knockoffs have the right correlation structure', {
+  # Problem parameters
+  n = 10000000   # number of observations
+  p = 3          # number of variables
+  
+  # Generate the variables from a multivariate normal distribution
+  mu = c(1,2,3); Sigma = matrix(c(1,0.55,0.2, 0.55,1,0.55, 0.2, 0.55, 1),3)
+  
+  X = matrix(rep(mu,each=n),n) + matrix(rnorm(n*p),n) %*% chol(Sigma)
+  Xk = create.gaussian(X, mu, Sigma, method='equi')
+  
+  SigmaHat = cov(Xk)
+  SigmaHatCross = cov(X, y=Xk)
+  muHat = colMeans(Xk)
+  
+  lambda_min = eigen(Sigma, symmetric=T, only.values = T)$values[p]
+  diag_s = diag(rep(1, nrow(Sigma)) * min(2*lambda_min, min(diag(Sigma))))
+  
+  expect_equal(mu, muHat, tolerance=2e-3)
+  expect_equal(Sigma, SigmaHat, tolerance=2e-3)
+  expect_equal(Sigma-diag_s, SigmaHatCross, tolerance=2e-3)
 })
