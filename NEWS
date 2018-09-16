@@ -1,4 +1,24 @@
-knockoff 0.3.0
+knockoff 0.3.2 (08/03/2018)
+---------------------------------------
+Fixes:
+* Fixed bug that caused incorrect knockoff statistics in the presence
+  of knockoff copies identical to their own original variable.
+
+Minor changes:
+* Changed scaling of variables for computation of importance measures.
+
+knockoff 0.3.1.1 (06/28/2018)
+---------------------------------------
+Minor changes:
+* Improved algorithm for solving SDP
+* Improved algorithm for solving ASDP
+* Returning X instead of throwing error in Gaussian knockoffs,
+  if covariance matrix is not positive-definite
+
+Documentation:
+* Minor improvements to package description file
+
+knockoff 0.3.0 (10/17/2017)
 ---------------------------------------
 Features:
 * Added support for Model-X knockoffs
@@ -20,7 +40,7 @@ Documentation:
 * Add vignette showing how to analyze a real data set (on HIV drug resistance),
   including all the preprocessing steps.
 
-knockoff 0.2 (02/04/15)
+knockoff 0.2 (02/04/2015)
 ---------------------------------------
 Changes:
 * The knockoff procedure is now fully deterministic by default. Randomization 
@@ -29,7 +49,7 @@ Changes:
 Fixes:
 * Fix numerical precision bug in equicorrelated knockoff creation
 
-knockoff 0.1.1 (12/19/14)
+knockoff 0.1.1 (12/19/2014)
 ---------------------------------------
 Features:
 * Expose the optional 'nlambda' parameter for lasso statistics
@@ -38,6 +58,6 @@ Fixes:
 * Better documentation for SDP knockoffs
 * Minor bug fixes
 
-knockoff 0.1 (12/05/14)
+knockoff 0.1 (12/05/2014)
 ---------------------------------------
 Initial release!

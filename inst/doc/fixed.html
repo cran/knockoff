@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2017-10-16" />
+<meta name="date" content="2018-09-15" />
 
 <title>Controlled variable Selection with Fixed-X Knockoffs</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Controlled variable Selection with Fixed-X Knockoffs</h1>
-<h4 class="date"><em>2017-10-16</em></h4>
+<h4 class="date"><em>2018-09-15</em></h4>
 
 
 
@@ -84,13 +84,13 @@ amplitude =<span class="st"> </span><span class="fl">4.5</span>   <span class="c
 <span class="co"># Generate the variables from a multivariate normal distribution</span>
 mu =<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>,p)
 rho =<span class="st"> </span><span class="fl">0.25</span>
-Sigma =<span class="st"> </span><span class="kw">toeplitz</span>(rho^(<span class="dv">0</span>:(p<span class="dv">-1</span>)))
-X =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(n*p),n) %*%<span class="st"> </span><span class="kw">chol</span>(Sigma)
+Sigma =<span class="st"> </span><span class="kw">toeplitz</span>(rho<span class="op">^</span>(<span class="dv">0</span><span class="op">:</span>(p<span class="op">-</span><span class="dv">1</span>)))
+X =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(n<span class="op">*</span>p),n) <span class="op">%*%</span><span class="st"> </span><span class="kw">chol</span>(Sigma)
 
 <span class="co"># Generate the response from a linear model</span>
 nonzero =<span class="st"> </span><span class="kw">sample</span>(p, k)
-beta =<span class="st"> </span>amplitude *<span class="st"> </span>(<span class="dv">1</span>:p %in%<span class="st"> </span>nonzero) /<span class="st"> </span><span class="kw">sqrt</span>(n)
-y.sample =<span class="st"> </span>function(X) X %*%<span class="st"> </span>beta +<span class="st"> </span><span class="kw">rnorm</span>(n)
+beta =<span class="st"> </span>amplitude <span class="op">*</span><span class="st"> </span>(<span class="dv">1</span><span class="op">:</span>p <span class="op">%in%</span><span class="st"> </span>nonzero) <span class="op">/</span><span class="st"> </span><span class="kw">sqrt</span>(n)
+y.sample =<span class="st"> </span><span class="cf">function</span>(X) X <span class="op">%*%</span><span class="st"> </span>beta <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(n)
 y =<span class="st"> </span><span class="kw">y.sample</span>(X)</code></pre></div>
 <div id="first-examples" class="section level2">
 <h2>First examples</h2>
@@ -106,8 +106,8 @@ result =<span class="st"> </span><span class="kw">knockoff.filter</span>(X, y, <
 ##  [1]  39  54  55  60  61  66  69  82  98 103 105 119 124 131 136 146 154
 ## [18] 155 159 165 230 231 255 269 273 274 277 284 285 295</code></pre>
 <p>The default value for the target false discovery rate is 0.1. In this experiment the false discovery proportion is</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fdp =<span class="st"> </span>function(selected) <span class="kw">sum</span>(beta[selected] ==<span class="st"> </span><span class="dv">0</span>) /<span class="st"> </span><span class="kw">max</span>(<span class="dv">1</span>, <span class="kw">length</span>(selected))
-<span class="kw">fdp</span>(result$selected)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fdp =<span class="st"> </span><span class="cf">function</span>(selected) <span class="kw">sum</span>(beta[selected] <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="op">/</span><span class="st"> </span><span class="kw">max</span>(<span class="dv">1</span>, <span class="kw">length</span>(selected))
+<span class="kw">fdp</span>(result<span class="op">$</span>selected)</code></pre></div>
 <pre><code>## [1] 0.06666667</code></pre>
 </div>
 <div id="see-also" class="section level2">

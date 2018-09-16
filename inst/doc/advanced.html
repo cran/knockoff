@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2017-10-16" />
+<meta name="date" content="2018-09-15" />
 
 <title>Advanced Usage of the Knockoff Filter for R</title>
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Advanced Usage of the Knockoff Filter for R</h1>
-<h4 class="date"><em>2017-10-16</em></h4>
+<h4 class="date"><em>2018-09-15</em></h4>
 
 
 
@@ -93,14 +93,14 @@ amplitude =<span class="st"> </span><span class="fl">7.5</span>  <span class="co
 <span class="co"># Generate the variables from a multivariate normal distribution</span>
 mu =<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>,p)
 rho =<span class="st"> </span><span class="fl">0.10</span>
-Sigma =<span class="st"> </span><span class="kw">toeplitz</span>(rho^(<span class="dv">0</span>:(p<span class="dv">-1</span>)))
-X =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(n*p),n) %*%<span class="st"> </span><span class="kw">chol</span>(Sigma)
+Sigma =<span class="st"> </span><span class="kw">toeplitz</span>(rho<span class="op">^</span>(<span class="dv">0</span><span class="op">:</span>(p<span class="op">-</span><span class="dv">1</span>)))
+X =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(n<span class="op">*</span>p),n) <span class="op">%*%</span><span class="st"> </span><span class="kw">chol</span>(Sigma)
 
 <span class="co"># Generate the response from a logistic model and encode it as a factor.</span>
 nonzero =<span class="st"> </span><span class="kw">sample</span>(p, k)
-beta =<span class="st"> </span>amplitude *<span class="st"> </span>(<span class="dv">1</span>:p %in%<span class="st"> </span>nonzero) /<span class="st"> </span><span class="kw">sqrt</span>(n)
-invlogit =<span class="st"> </span>function(x) <span class="kw">exp</span>(x) /<span class="st"> </span>(<span class="dv">1</span>+<span class="kw">exp</span>(x))
-y.sample =<span class="st"> </span>function(x) <span class="kw">rbinom</span>(n, <span class="dt">prob=</span><span class="kw">invlogit</span>(x %*%<span class="st"> </span>beta), <span class="dt">size=</span><span class="dv">1</span>)
+beta =<span class="st"> </span>amplitude <span class="op">*</span><span class="st"> </span>(<span class="dv">1</span><span class="op">:</span>p <span class="op">%in%</span><span class="st"> </span>nonzero) <span class="op">/</span><span class="st"> </span><span class="kw">sqrt</span>(n)
+invlogit =<span class="st"> </span><span class="cf">function</span>(x) <span class="kw">exp</span>(x) <span class="op">/</span><span class="st"> </span>(<span class="dv">1</span><span class="op">+</span><span class="kw">exp</span>(x))
+y.sample =<span class="st"> </span><span class="cf">function</span>(x) <span class="kw">rbinom</span>(n, <span class="dt">prob=</span><span class="kw">invlogit</span>(x <span class="op">%*%</span><span class="st"> </span>beta), <span class="dt">size=</span><span class="dv">1</span>)
 y =<span class="st"> </span><span class="kw">factor</span>(<span class="kw">y.sample</span>(X), <span class="dt">levels=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>))</code></pre></div>
 </div>
 <div id="looking-inside-the-knockoff-filter" class="section level2">
@@ -113,12 +113,12 @@ y =<span class="st"> </span><span class="kw">factor</span>(<span class="kw">y.sa
 <p>Now we can compute the rejection threshold</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">thres =<span class="st"> </span><span class="kw">knockoff.threshold</span>(W, <span class="dt">fdr=</span><span class="fl">0.2</span>, <span class="dt">offset=</span><span class="dv">1</span>)</code></pre></div>
 <p>The final step is to select the variables</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected =<span class="st"> </span><span class="kw">which</span>(W &gt;=<span class="st"> </span>thres)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected =<span class="st"> </span><span class="kw">which</span>(W <span class="op">&gt;=</span><span class="st"> </span>thres)
 <span class="kw">print</span>(selected)</code></pre></div>
 <pre><code>##  [1]   3  12  76 108 172 173 196 210 248 273 281 298 304 334 360 378 426
 ## [18] 428 451 494 510 543 563 595 596 708 787 837 843 844 931 941 953 959</code></pre>
 <p>The false discovery proportion is</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fdp =<span class="st"> </span>function(selected) <span class="kw">sum</span>(beta[selected] ==<span class="st"> </span><span class="dv">0</span>) /<span class="st"> </span><span class="kw">max</span>(<span class="dv">1</span>, <span class="kw">length</span>(selected))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fdp =<span class="st"> </span><span class="cf">function</span>(selected) <span class="kw">sum</span>(beta[selected] <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="op">/</span><span class="st"> </span><span class="kw">max</span>(<span class="dv">1</span>, <span class="kw">length</span>(selected))
 <span class="kw">fdp</span>(selected)</code></pre></div>
 <pre><code>## [1] 0.3235294</code></pre>
 </div>
@@ -135,18 +135,18 @@ diag_s =<span class="st"> </span><span class="kw">create.solve_asdp</span>(Sigma
 
 <span class="co"># Compute the fdp over 20 iterations</span>
 nIterations =<span class="st"> </span><span class="dv">20</span>
-fdp_list =<span class="st"> </span><span class="kw">sapply</span>(<span class="dv">1</span>:nIterations, function(it) {
+fdp_list =<span class="st"> </span><span class="kw">sapply</span>(<span class="dv">1</span><span class="op">:</span>nIterations, <span class="cf">function</span>(it) {
     <span class="co"># Run the knockoff filter manually, using the pre-computed value of diag_s</span>
     X_k =<span class="st"> </span><span class="kw">create.gaussian</span>(X, mu, Sigma, <span class="dt">diag_s=</span>diag_s)
     W =<span class="st"> </span><span class="kw">stat.glmnet_lambdasmax</span>(X, X_k, y, <span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)
     t =<span class="st"> </span><span class="kw">knockoff.threshold</span>(W, <span class="dt">fdr=</span><span class="fl">0.2</span>, <span class="dt">offset=</span><span class="dv">1</span>)
-    selected =<span class="st"> </span><span class="kw">which</span>(W &gt;=<span class="st"> </span>t)
+    selected =<span class="st"> </span><span class="kw">which</span>(W <span class="op">&gt;=</span><span class="st"> </span>t)
     <span class="co"># Compute and store the fdp</span>
     <span class="kw">fdp</span>(selected)
   })
 <span class="co"># Estimate the FDR</span>
 <span class="kw">mean</span>(fdp_list)</code></pre></div>
-<pre><code>## [1] 0.1204519</code></pre>
+<pre><code>## [1] 0.1226801</code></pre>
 </div>
 <div id="see-also" class="section level2">
 <h2>See also</h2>

@@ -4,22 +4,22 @@
 \alias{create.solve_asdp}
 \title{Relaxed optimization for fixed-X and Gaussian knockoffs}
 \usage{
-create.solve_asdp(Sigma, nBlocks = 10, cores = 1, gaptol = 1e-06,
-  maxit = 1000)
+create.solve_asdp(Sigma, max.size = 500, gaptol = 1e-06, maxit = 1000,
+  verbose = FALSE)
 }
 \arguments{
 \item{Sigma}{positive-definite p-by-p covariance matrix.}
 
-\item{nBlocks}{number of blocks in the block-diagonal approximation of Sigma (default: 10).}
-
-\item{cores}{number of cores used to solve the smaller SDPs (default: 1).}
+\item{max.size}{size of the largest block in the block-diagonal approximation of Sigma (default: 500). See Details.}
 
 \item{gaptol}{tolerance for duality gap as a fraction of the value of the objective functions (default: 1e-6).}
 
 \item{maxit}{the maximum number of iterations for the solver (default: 1000).}
+
+\item{verbose}{whether to display progress (default: FALSE).}
 }
 \value{
-The solution \eqn{s} to the semidefinite programming problem defined above.
+The solution \eqn{s} to the semidefinite program defined above.
 }
 \description{
 This function solves the optimization problem needed to create fixed-X and Gaussian SDP knockoffs
@@ -27,7 +27,7 @@ on a block-diagonal approximation of the covariance matrix. This will be less
 powerful than \code{\link{create.solve_sdp}}, but more computationally efficient.
 }
 \details{
-Solves the following two-step semidefinite programming problem:
+Solves the following two-step semidefinite program:
 
   (step 1)  \deqn{ \mathrm{maximize}     \; \mathrm{sum}(s) \quad
                    \mathrm{subject} \; \mathrm{to:}  \; 0 \leq s \leq 1, \;
@@ -37,6 +37,10 @@ Solves the following two-step semidefinite programming problem:
                   \mathrm{subject} \; \mathrm{to:}    \; \mathrm{diag}(\gamma s) \leq 2 \Sigma}
 
 Each smaller SDP is solved using the interior-point method implemented in \code{\link[Rdsdp]{dsdp}}.
+
+The parameter max.size controls the size of the largest semidefinite program that needs to be solved.
+A larger value of max.size will increase the computation cost, while yielding a solution closer to
+that of the original semidefinite program.
 
 If the matrix Sigma supplied by the user is a non-scaled covariance matrix 
 (i.e. its diagonal entries are not all equal to 1), then the appropriate scaling is applied before
