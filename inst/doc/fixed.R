@@ -1,7 +1,7 @@
-## ---- results='hide', message=FALSE, warning=FALSE-----------------------
+## ---- results='hide', message=FALSE, warning=FALSE----------------------------
 set.seed(1234)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # Problem parameters
 n = 1000          # number of observations
 p = 300           # number of variables
@@ -20,14 +20,14 @@ beta = amplitude * (1:p %in% nonzero) / sqrt(n)
 y.sample = function(X) X %*% beta + rnorm(n)
 y = y.sample(X)
 
-## ---- results='hide', message=FALSE--------------------------------------
+## ---- results='hide', message=FALSE-------------------------------------------
 library(knockoff)
 result = knockoff.filter(X, y, knockoffs = create.fixed, statistic = stat.glmnet_lambdasmax)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 print(result)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 fdp = function(selected) sum(beta[selected] == 0) / max(1, length(selected))
 fdp(result$selected)
 

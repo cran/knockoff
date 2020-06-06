@@ -1,8 +1,8 @@
 Package: knockoff
 Type: Package
 Title: The Knockoff Filter for Controlled Variable Selection
-Version: 0.3.2
-Date: 2018-09-15
+Version: 0.3.3
+Date: 2020-06-01
 Authors@R: c(person("Rina", "Foygel Barber", role = c("ctb"),
                      comment="Development of the original Fixed-X Knockoffs"),
              person("Emmanuel", "Candes", role = c("ctb"),
@@ -10,32 +10,32 @@ Authors@R: c(person("Rina", "Foygel Barber", role = c("ctb"),
              person("Lucas", "Janson", role = c("ctb"),
                     comment="Development of Model-X Knockoffs"),
              person("Evan", "Patterson", role = c("aut"),
-                    comment="Original R package for the original Fixed-X Knockoffs"),
+                    comment="Earlier R package for the original Fixed-X Knockoffs"),
              person("Matteo", "Sesia", role = c("aut","cre"),
-                    comment="R package for Model-X Knockoffs", email="msesia@stanford.edu"))
+                    comment="R package for Model-X Knockoffs", email="sesia@marshall.usc.edu"))
 Description: The knockoff filter is a general procedure for controlling the false discovery rate (FDR)
   when performing variable selection. 
   For more information, see the website below and the accompanying paper: Candes et al., 
-  "Panning for Gold: Model-X Knockoffs for High-dimensional Controlled Variable Selection", 
-  2016, <arXiv:1610.02351>.
+  "Panning for gold: model-X knockoffs for high-dimensional controlled variable selection", 
+  J. R. Statist. Soc. B (2018) 80, 3, pp. 551-577.
 License: GPL-3
 URL: https://web.stanford.edu/group/candes/knockoffs/index.html
 Depends: methods, stats
 Imports: Rdsdp, Matrix, corpcor, glmnet, RSpectra, gtools, utils
-Suggests: knitr, testthat, rmarkdown, lars, ranger, stabs, flare, doMC,
-        parallel
-RoxygenNote: 6.0.1
+Suggests: knitr, testthat, rmarkdown, lars, ranger, stabs, RPtests,
+        doMC, parallel
+RoxygenNote: 7.1.0
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2018-09-15 21:03:11 UTC; msesia
+Packaged: 2020-06-05 18:05:17 UTC; msesia
 Author: Rina Foygel Barber [ctb] (Development of the original Fixed-X
     Knockoffs),
   Emmanuel Candes [ctb] (Development of Model-X Knockoffs and original
     Fixed-X Knockoffs),
   Lucas Janson [ctb] (Development of Model-X Knockoffs),
-  Evan Patterson [aut] (Original R package for the original Fixed-X
+  Evan Patterson [aut] (Earlier R package for the original Fixed-X
     Knockoffs),
   Matteo Sesia [aut, cre] (R package for Model-X Knockoffs)
-Maintainer: Matteo Sesia <msesia@stanford.edu>
+Maintainer: Matteo Sesia <sesia@marshall.usc.edu>
 Repository: CRAN
-Date/Publication: 2018-09-16 16:30:08 UTC
+Date/Publication: 2020-06-06 05:00:02 UTC

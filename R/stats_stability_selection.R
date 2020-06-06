@@ -21,14 +21,14 @@
 #' variable selection stability. The selection stability of the j-th 
 #' variable is defined as its probability of being selected upon random
 #' subsampling of the data. The default method for selecting variables 
-#' in each subsampled dataset is \code{\link[stabs]{glmnet.lasso_maxCoef}}.
+#' in each subsampled dataset is \code{\link[stabs]{lars.lasso}}.
 #' 
 #' For a complete list of the available additional arguments, see \code{\link[stabs]{stabsel}}. 
 #' 
 #' @family statistics
 #' 
 #' @examples
-#' p=100; n=100; k=15
+#' p=50; n=50; k=15
 #' mu = rep(0,p); Sigma = diag(p)
 #' X = matrix(rnorm(n*p),n)
 #' nonzero = sample(p, k)
@@ -38,18 +38,13 @@
 #' 
 #' # Basic usage with default arguments
 #' result = knockoff.filter(X, y, knockoffs=knockoffs,
-#'                            statistic=stat.stability_selection)
+#'                          statistic=stat.stability_selection)
 #' print(result$selected)
 #' 
-#' # Advanced usage with custom arguments
-#' foo = stat.stability_selection
-#' k_stat = function(X, X_k, y) foo(X, X_k, y, fitfun=stabs::lars.lasso)
-#' result = knockoff.filter(X, y, knockoffs=knockoffs, statistic=k_stat)
-#' print(result$selected)
 #' 
 #' @rdname stat.stability_selection
 #' @export
-stat.stability_selection <- function(X, X_k, y, fitfun = stabs::glmnet.lasso, ...) {
+stat.stability_selection <- function(X, X_k, y, fitfun = stabs::lars.lasso, ...) {
   if (!requireNamespace('stabs', quietly=T))
     stop('stabs is not installed', call.=F)
   if (!is.vector(y)) {

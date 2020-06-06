@@ -1,12 +1,12 @@
-## ---- echo=FALSE---------------------------------------------------------
+## ---- echo=FALSE--------------------------------------------------------------
 knitr::knit_hooks$set(small.margin = function(before, options, envir) {
     if (before) par(mar = c(2,3,3,2))
 })
 
-## ----drug-type-----------------------------------------------------------
+## ----drug-type----------------------------------------------------------------
 drug_class = 'PI' # Possible drug types are 'PI', 'NRTI', and 'NNRTI'. 
 
-## ----raw-data------------------------------------------------------------
+## ----raw-data-----------------------------------------------------------------
 base_url = 'http://hivdb.stanford.edu/pages/published_analysis/genophenoPNAS2006'
 gene_url = paste(base_url, 'DATA', paste0(drug_class, '_DATA.txt'), sep='/')
 tsm_url = paste(base_url, 'MUTATIONLISTS', 'NP_TSM', drug_class, sep='/')
@@ -15,11 +15,11 @@ gene_df = read.delim(gene_url, na.string = c('NA', ''), stringsAsFactors = FALSE
 tsm_df = read.delim(tsm_url, header = FALSE, stringsAsFactors = FALSE)
 names(tsm_df) = c('Position', 'Mutations')
 
-## ---- results='asis', echo=FALSE-----------------------------------------
+## ---- results='asis', echo=FALSE----------------------------------------------
 knitr::kable(head(gene_df[,4:20]))
 knitr::kable(head(tsm_df))
 
-## ----cleaned-data--------------------------------------------------------
+## ----cleaned-data-------------------------------------------------------------
 # Returns rows for which every column matches the given regular expression.
 grepl_rows <- function(pattern, df) {
   cell_matches = apply(df, c(1,2), function(x) grepl(pattern, x))
@@ -31,7 +31,7 @@ pos_cols = seq.int(pos_start, ncol(gene_df))
 valid_rows = grepl_rows('^(\\.|-|[A-Zid]+)$', gene_df[,pos_cols])
 gene_df = gene_df[valid_rows,]
 
-## ----design-matrix-------------------------------------------------------
+## ----design-matrix------------------------------------------------------------
 # Flatten a matrix to a vector with names from concatenating row/column names.
 flatten_matrix <- function(M, sep='.') {
   x <- c(M)
@@ -54,19 +54,19 @@ X = X[,colSums(X) != 0]
 # Extract response matrix.
 Y = gene_df[,4:(pos_start-1)]
 
-## ---- results='asis', echo=FALSE-----------------------------------------
+## ---- results='asis', echo=FALSE----------------------------------------------
 knitr::kable(X[1:10,1:10])
 
-## ---- results='asis', echo=FALSE-----------------------------------------
+## ---- results='asis', echo=FALSE----------------------------------------------
 knitr::kable(head(Y))
 
-## ----small.margin=TRUE---------------------------------------------------
+## ----small.margin=TRUE--------------------------------------------------------
 hist(Y[,1], breaks='FD')
 
-## ----small.margin=TRUE---------------------------------------------------
+## ----small.margin=TRUE--------------------------------------------------------
 hist(log(Y[,1]), breaks='FD')
 
-## ----knockoff------------------------------------------------------------
+## ----knockoff-----------------------------------------------------------------
 library(knockoff)
 
 knockoff_and_bhq <- function (X, y, q) {
@@ -102,10 +102,10 @@ knockoff_and_bhq <- function (X, y, q) {
 fdr = 0.20
 results = lapply(Y, function(y) knockoff_and_bhq(X, y, fdr))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 print(results[1])
 
-## ----comparisons---------------------------------------------------------
+## ----comparisons--------------------------------------------------------------
 get_position <- function(x)
   sapply(regmatches(x, regexpr('[[:digit:]]+', x)), as.numeric)
 
@@ -120,10 +120,10 @@ comparisons <- lapply(results, function(drug) {
   })
 })
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 print(comparisons[1])
 
-## ----small.margin=TRUE---------------------------------------------------
+## ----small.margin=TRUE--------------------------------------------------------
 for (drug in names(comparisons)) {
   plot_data = do.call(cbind, comparisons[[drug]])
   plot_data = plot_data[c('true_discoveries','false_discoveries'),]
