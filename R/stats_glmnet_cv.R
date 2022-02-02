@@ -53,6 +53,7 @@
 #' @family statistics
 #' 
 #' @examples
+#' set.seed(2022)
 #' p=200; n=100; k=15
 #' mu = rep(0,p); Sigma = diag(p)
 #' X = matrix(rnorm(n*p),n)
@@ -78,8 +79,8 @@ stat.glmnet_coefdiff <- function(X, X_k, y, family='gaussian', cores=2, ...) {
   if (!requireNamespace('glmnet', quietly=T))
     stop('glmnet is not installed', call.=F)
   parallel=T
-  if (!requireNamespace('doMC', quietly=T)) {
-    warning('doMC is not installed. Without parallelization, the statistics will be slower to compute', call.=F,immediate.=T)
+  if (!requireNamespace('doParallel', quietly=T)) {
+    warning('doParallel is not installed. Without parallelization, the statistics will be slower to compute', call.=F,immediate.=T)
     parallel=F
   }
   if (!requireNamespace('parallel', quietly=T)) {
@@ -100,7 +101,7 @@ stat.glmnet_coefdiff <- function(X, X_k, y, family='gaussian', cores=2, ...) {
       }
     }
     if (cores>1) {
-      doMC::registerDoMC(cores=cores)
+      doParallel::registerDoParallel(cores=cores)
       parallel = TRUE
     }
     else {
@@ -113,15 +114,34 @@ stat.glmnet_coefdiff <- function(X, X_k, y, family='gaussian', cores=2, ...) {
   swap.M = matrix(swap,nrow=nrow(X),ncol=length(swap),byrow=TRUE)
   X.swap  = X * (1-swap.M) + X_k * swap.M
   Xk.swap = X * swap.M + X_k * (1-swap.M)
-  
-  # Compute statistics
-  Z = cv_coeffs_glmnet(cbind(X.swap, Xk.swap), y, family=family, parallel=parallel, ...)
+
   p = ncol(X)
+
+  # Compute statistics
+  glmnet.coefs = cv_coeffs_glmnet(cbind(X.swap, Xk.swap), y, family=family, parallel=parallel, ...)
+  if(family=="multinomial") {
+      Z <- abs(glmnet.coefs[[1]][2:(2*p+1)])
+      for(b in 2:length(glmnet.coefs)) {
+          Z <- Z + abs(glmnet.coefs[[b]][2:(2*p+1)])
+      }
+  } else if (family=="cox") {
+      Z <- glmnet.coefs[1:(2*p)]
+  } else {
+      Z <- glmnet.coefs[2:(2*p+1)]
+  }
   orig = 1:p
   W = abs(Z[orig]) - abs(Z[orig+p])
   
   # Correct for swapping of columns of X and Xk
   W = W * (1-2*swap)
+
+  # Stop the parallel cluster (if applicable)  
+  if (parallel) {
+    if (cores>1) {
+      doParallel::stopImplicitCluster()
+    }
+  }
+  return(W)
 }
 
 #' @keywords internal
@@ -129,7 +149,6 @@ cv_coeffs_glmnet <- function(X, y, nlambda=500, intercept=T, parallel=T, ...) {
   # Standardize variables
   X = scale(X)
   
-  n = nrow(X); p = ncol(X)
   n = nrow(X); p = ncol(X)
   
   if (!methods::hasArg(family) ) family = "gaussian"
@@ -154,5 +173,5 @@ cv_coeffs_glmnet <- function(X, y, nlambda=500, intercept=T, parallel=T, ...) {
   cv.glmnet.fit <- glmnet::cv.glmnet(X, y, lambda=lambda, intercept=intercept,
                                      standardize=F,standardize.response=F, parallel=parallel, ...)
   
-  coef(cv.glmnet.fit, s = "lambda.min")[2:(p+1)]
+  coef(cv.glmnet.fit, s = "lambda.min")
 }

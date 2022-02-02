@@ -24,6 +24,7 @@
 #' @family statistics
 #' 
 #' @examples
+#' set.seed(2022)
 #' p=100; n=100; k=15
 #' mu = rep(0,p); Sigma = diag(p)
 #' X = matrix(rnorm(n*p),n)
@@ -63,10 +64,9 @@ stat.forward_selection <- function(X, X_k, y, omp=F) {
   
   # Compute statistics
   path = fs(cbind(X.swap, Xk.swap), y, omp)
-  Z = 2*p + 1 - order(path)
+  Z = 2*p + 1 - order(path) # Are we recycling here?
   orig = 1:p
   W = pmax(Z[orig], Z[orig+p]) * sign(Z[orig] - Z[orig+p])
-  
   # Correct for swapping of columns of X and Xk
   W = W * (1-2*swap)
 }
@@ -94,7 +94,7 @@ fs <- function(X, y, omp=FALSE) {
     available_vars = which(!in_model)
     products = apply(X[,!in_model,drop=F], 2,
                      function(x) abs(sum(x * residual)))
-    best_var = available_vars[which.max(products)]
+    best_var = available_vars[which.max(products)][1]
     path[step] = best_var
     in_model[best_var] = TRUE
     
@@ -106,10 +106,11 @@ fs <- function(X, y, omp=FALSE) {
         x = x - Q[,j]%*%x * Q[,j]
       q = x / sqrt(sum(x^2))
       Q[,step] = q
-      residual = residual - q%*%y * q
+      residual = residual - (q%*%y)[1] * q
     } 
-    else
-      residual = residual - x%*%residual * x
+    else {
+      residual = residual - (x %*% residual)[1] * x
+    }
   }
   return(path)
 }
