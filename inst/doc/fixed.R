@@ -3,8 +3,8 @@ set.seed(1234)
 
 ## -----------------------------------------------------------------------------
 # Problem parameters
-n = 1000          # number of observations
-p = 300           # number of variables
+n = 500          # number of observations
+p = 100           # number of variables
 k = 30            # number of variables with nonzero coefficients
 amplitude = 4.5   # signal amplitude (for noise level = 1)
 

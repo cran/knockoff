@@ -20,7 +20,7 @@
 #' 
 #' @examples
 #' set.seed(2022)
-#' p=200; n=100; k=15
+#' p=100; n=80; k=15
 #' rho = 0.4
 #' mu = rep(0,p); Sigma = toeplitz(rho^(0:(p-1)))
 #' X = matrix(rnorm(n*p),n) %*% chol(Sigma)

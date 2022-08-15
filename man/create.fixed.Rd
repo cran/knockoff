@@ -44,7 +44,7 @@ property and should not be used with fixed-X knockoffs.
 }
 \examples{
 set.seed(2022)
-p=100; n=200; k=15
+p=50; n=100; k=15
 X = matrix(rnorm(n*p),n)
 nonzero = sample(p, k)
 beta = 5.5 * (1:p \%in\% nonzero)
@@ -64,7 +64,6 @@ print(result$selected)
 Barber and Candes,
   Controlling the false discovery rate via knockoffs. 
   Ann. Statist. 43 (2015), no. 5, 2055--2085.
-  \doi{10.1214/15-AOS1337}
 }
 \seealso{
 Other create: 

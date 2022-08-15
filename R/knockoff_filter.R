@@ -69,11 +69,10 @@ NULL
 #'   Barber and Candes,
 #'   Controlling the false discovery rate via knockoffs. 
 #'   Ann. Statist. 43 (2015), no. 5, 2055--2085.
-#'   \doi{10.1214/15-AOS1337}
 #' 
 #' @examples
 #' set.seed(2022)
-#' p=200; n=100; k=15
+#' p=100; n=80; k=15
 #' mu = rep(0,p); Sigma = diag(p)
 #' X = matrix(rnorm(n*p),n)
 #' nonzero = sample(p, k)

@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-<meta name="date" content="2022-02-01" />
+<meta name="date" content="2022-08-12" />
 
 <title>Controlled variable Selection with Model-X Knockoffs</title>
 
@@ -139,15 +139,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 <h1 class="title toc-ignore">Controlled variable Selection with Model-X Knockoffs</h1>
-<h4 class="date">2022-02-01</h4>
+<h4 class="date">2022-08-12</h4>
 
 
 
 <p>This vignette illustrates the basic usage of the <code>knockoff</code> package with Model-X knockoffs. In this scenario we assume that the distribution of the predictors is known (or that it can be well approximated), but we make no assumptions on the conditional distribution of the response. For simplicity, we will use synthetic data constructed from a linear model such that the response only depends on a small fraction of the variables.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem parameters</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">1000</span>          <span class="co"># number of observations</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">1000</span>          <span class="co"># number of variables</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">200</span>           <span class="co"># number of observations</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">200</span>           <span class="co"># number of variables</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>k <span class="ot">=</span> <span class="dv">60</span>            <span class="co"># number of variables with nonzero coefficients</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>amplitude <span class="ot">=</span> <span class="fl">4.5</span>   <span class="co"># signal amplitude (for noise level = 1)</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
@@ -173,13 +173,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## knockoff.filter(X = X, y = y)
 ## 
 ## Selected variables:
-##  [1]  36  37  40  62  87  93 101 139 176 185 204 225 235 276 280 310 311 335 374
-## [20] 418 440 441 447 449 470 488 494 530 544 545 560 571 580 681 683 687 691 747
-## [39] 757 838 857 874 879 889 929 940 986 988 995</code></pre>
+##  [1]   8  11  15  27  45  50  51  60  66  68  71  81  87  88  99 101 111 112 114
+## [20] 134 135 146 150 152 153 158 160 161 162 164 166 172 177 179 181</code></pre>
 <p>The default value for the target false discovery rate is 0.1. In this experiment the false discovery proportion is</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fdp <span class="ot">=</span> <span class="cf">function</span>(selected) <span class="fu">sum</span>(beta[selected] <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">/</span> <span class="fu">max</span>(<span class="dv">1</span>, <span class="fu">length</span>(selected))</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fdp</span>(result<span class="sc">$</span>selected)</span></code></pre></div>
-<pre><code>## [1] 0.04081633</code></pre>
+<pre><code>## [1] 0.02857143</code></pre>
 <p>By default, the knockoff filter creates model-X second-order Gaussian knockoffs. This construction estimates from the data the mean <span class="math inline">\(\mu\)</span> and the covariance <span class="math inline">\(\Sigma\)</span> of the rows of <span class="math inline">\(X\)</span>, instead of using the true parameters (<span class="math inline">\(\mu, \Sigma\)</span>) from which the variables were sampled.</p>
 <p>The knockoff package also includes other knockoff construction methods, all of which have names prefixed with<code>knockoff.create</code>. In the next snippet, we generate knockoffs using the true model parameters.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>gaussian_knockoffs <span class="ot">=</span> <span class="cf">function</span>(X) <span class="fu">create.gaussian</span>(X, mu, Sigma)</span>
@@ -189,13 +188,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## knockoff.filter(X = X, y = y, knockoffs = gaussian_knockoffs)
 ## 
 ## Selected variables:
-##  [1]  34  36  37  54  62  87  93 101 139 164 176 185 204 225 235 276 280 305 310
-## [20] 311 335 371 374 418 440 441 442 447 467 470 488 494 530 544 545 560 571 580
-## [39] 612 681 683 687 691 709 747 756 757 792 838 852 857 874 879 883 889 929 931
-## [58] 940 986 988 995</code></pre>
+##  [1]  11  15  27  50  60  66  82  83  94  99 114 134 135 141 146 150 153 160 161
+## [20] 162 165 166 172 179 181</code></pre>
 <p>Now the false discovery proportion is</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fdp</span>(result<span class="sc">$</span>selected)</span></code></pre></div>
-<pre><code>## [1] 0.1147541</code></pre>
+<pre><code>## [1] 0</code></pre>
 <p>By default, the knockoff filter uses a test statistic based on the lasso. Specifically, it uses the statistic <code>stat.glmnet_coefdiff</code>, which computes <span class="math display">\[
 W_j = |Z_j| - |\tilde{Z}_j|
 \]</span> where <span class="math inline">\(Z_j\)</span> and <span class="math inline">\(\tilde{Z}_j\)</span> are the lasso coefficient estimates for the jth variable and its knockoff, respectively. The value of the regularization parameter <span class="math inline">\(\lambda\)</span> is selected by cross-validation and computed with <code>glmnet</code>.</p>
@@ -207,10 +204,9 @@ W_j = |Z_j| - |\tilde{Z}_j|
 ##     statistic = stat.random_forest, fdr = 0.2)
 ## 
 ## Selected variables:
-##  [1]  36  37  62 146 156 176 204 210 220 225 280 310 311 374 440 441 447 450 488
-## [20] 494 530 545 560 571 683 689 691 709 747 784 879 889 940 988 995</code></pre>
+## [1]  68  87 114 158 161</code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fdp</span>(result<span class="sc">$</span>selected)</span></code></pre></div>
-<pre><code>## [1] 0.2285714</code></pre>
+<pre><code>## [1] 0</code></pre>
 </div>
 <div id="user-defined-test-statistics" class="section level2">
 <h2>User-defined test statistics</h2>
@@ -227,9 +223,10 @@ W_j = \left|X_j^\top \cdot y\right| - \left|\tilde{X}_j^\top \cdot y\right|.
 ##     statistic = my_knockoff_stat)
 ## 
 ## Selected variables:
-##  [1]  37 225 310 373 374 440 447 494 691 857 889 929 940 988</code></pre>
+##  [1]  11  12  50  54  60  66  68  83  85  87  88  94  99 114 134 146 158 160 161
+## [20] 166 177 179 181</code></pre>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fdp</span>(result<span class="sc">$</span>selected)</span></code></pre></div>
-<pre><code>## [1] 0.07142857</code></pre>
+<pre><code>## [1] 0.08695652</code></pre>
 <p>As another example, we show how to customize the grid of <span class="math inline">\(\lambda\)</span>’s used to compute the lasso path in the default test statistic.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>my_lasso_stat <span class="ot">=</span> <span class="cf">function</span>(...) <span class="fu">stat.glmnet_coefdiff</span>(..., <span class="at">nlambda=</span><span class="dv">100</span>)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">=</span> <span class="fu">knockoff.filter</span>(X, y, <span class="at">knockoffs =</span> gaussian_knockoffs, <span class="at">statistic =</span> my_lasso_stat)</span>
@@ -239,12 +236,10 @@ W_j = \left|X_j^\top \cdot y\right| - \left|\tilde{X}_j^\top \cdot y\right|.
 ##     statistic = my_lasso_stat)
 ## 
 ## Selected variables:
-##  [1]  36  37  40  54  62  87  93 101 139 164 176 185 204 225 235 276 280 305 310
-## [20] 311 335 374 418 440 441 442 447 449 467 470 488 494 530 544 545 560 571 580
-## [39] 612 681 683 687 691 709 747 757 838 841 852 857 874 879 883 889 929 931 940
-## [58] 986 988 995</code></pre>
+##  [1]  15  27  60  66  67  71  83  99 111 114 134 135 141 153 158 160 161 165 172
+## [20] 177 179 186 193</code></pre>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fdp</span>(result<span class="sc">$</span>selected)</span></code></pre></div>
-<pre><code>## [1] 0.08333333</code></pre>
+<pre><code>## [1] 0</code></pre>
 <p>The <code>nlambda</code> parameter is passed by <code>stat.glmnet_coefdiff</code> to the <code>glmnet</code>, which is used to compute the lasso path. For more information about this and other parameters, see the documentation for <code>stat.glmnet_coefdiff</code> or <code>glmnet.glmnet</code>.</p>
 </div>
 <div id="user-defined-knockoff-generation-functions" class="section level2">
@@ -259,11 +254,11 @@ W_j = \left|X_j^\top \cdot y\right| - \left|\tilde{X}_j^\top \cdot y\right|.
 ## knockoff.filter(X = X, y = y, knockoffs = create_knockoffs)
 ## 
 ## Selected variables:
-##  [1]  36  37  40  54  93 101 139 176 185 204 225 235 276 280 305 310 311 335 374
-## [20] 418 440 441 447 449 467 488 494 530 544 545 560 571 580 681 683 687 691 747
-## [39] 757 792 838 841 852 857 874 879 883 889 929 940 986 988 995</code></pre>
+##  [1]  11  12  27  41  50  51  56  60  66  68  71  80  83  87  88  94  99 101 111
+## [20] 112 114 132 134 135 140 141 142 146 150 152 153 156 158 160 161 164 165 166
+## [39] 167 168 172 177 179 181 182 187 193</code></pre>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fdp</span>(result<span class="sc">$</span>selected)</span></code></pre></div>
-<pre><code>## [1] 0.0754717</code></pre>
+<pre><code>## [1] 0.06382979</code></pre>
 </div>
 <div id="approximate-vs-full-sdp-knockoffs" class="section level2">
 <h2>Approximate vs Full SDP knockoffs</h2>
@@ -276,11 +271,11 @@ W_j = \left|X_j^\top \cdot y\right| - \left|\tilde{X}_j^\top \cdot y\right|.
 ## knockoff.filter(X = X, y = y, knockoffs = gaussian_knockoffs)
 ## 
 ## Selected variables:
-##  [1]  36  37  40  54  62  93 101 139 164 176 185 204 225 235 276 280 310 311 335
-## [20] 374 418 440 441 447 449 467 488 494 530 544 545 560 571 580 681 683 687 691
-## [39] 747 757 838 841 857 874 879 889 929 940 988 995</code></pre>
+##  [1]   8  11  12  15  27  48  50  51  60  66  68  80  83  87  88  94  99 101 111
+## [20] 112 114 132 134 135 140 141 146 150 152 153 158 160 161 164 165 166 167 168
+## [39] 172 177 179 181 193</code></pre>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fdp</span>(result<span class="sc">$</span>selected)</span></code></pre></div>
-<pre><code>## [1] 0.06</code></pre>
+<pre><code>## [1] 0.04651163</code></pre>
 </div>
 <div id="equi-correlated-knockoffs" class="section level2">
 <h2>Equi-correlated knockoffs</h2>
@@ -292,11 +287,11 @@ W_j = \left|X_j^\top \cdot y\right| - \left|\tilde{X}_j^\top \cdot y\right|.
 ## knockoff.filter(X = X, y = y, knockoffs = gaussian_knockoffs)
 ## 
 ## Selected variables:
-##  [1]  36  37  40  54  62  87  93 101 139 176 185 225 235 276 310 311 335 374 418
-## [20] 440 441 442 447 467 470 488 494 530 544 545 560 571 580 681 683 687 691 709
-## [39] 747 756 757 792 838 841 852 857 874 879 883 889 929 940 986 988 995</code></pre>
+##  [1]   8  11  12  27  50  51  60  66  67  68  80  82  83  87  88  94  99 101 111
+## [20] 112 114 134 135 140 141 146 150 152 153 160 161 162 164 165 166 168 172 177
+## [39] 179 181 182 193</code></pre>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fdp</span>(result<span class="sc">$</span>selected)</span></code></pre></div>
-<pre><code>## [1] 0.07272727</code></pre>
+<pre><code>## [1] 0</code></pre>
 </div>
 <div id="see-also" class="section level2">
 <h2>See also</h2>

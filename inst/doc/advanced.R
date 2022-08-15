@@ -4,8 +4,8 @@ library(knockoff)
 
 ## -----------------------------------------------------------------------------
 # Problem parameters
-n = 1000         # number of observations
-p = 1000         # number of variables
+n = 200         # number of observations
+p = 200         # number of variables
 k = 60           # number of variables with nonzero coefficients
 amplitude = 7.5  # signal amplitude (for noise level = 1)
 

@@ -1,22 +1,27 @@
-knockoff 0.3.5 (01/31/2022)
----------------------------------------
+# knockoff 0.3.6 (Release date: 08/12/2022)
+
+Minor changes:
+* Removed HIV drug resistance vignette due to broken links to publicly available data set.
+
+# knockoff 0.3.5 (Release date: 01/31/2022)
+
 Minor changes:
 * Fixed bug in stat.glmnet_coefdiff: "cox" family has no intercept
 * Fixed call to sample.int in tests/testthat/test_stats.R.
   
-knockoff 0.3.4 (03/08/2021)
----------------------------------------
+# knockoff 0.3.4 (Release date: 03/08/2021)
+
 Minor changes:
 * Fixed bug in stat.glmnet_coefdiff and stat.glmnet_lambdadiff, 
   which did not previously work with "multinomial" family
 
-knockoff 0.3.3 (06/01/2020)
----------------------------------------
+# knockoff 0.3.3 (Release date: 06/01/2020)
+
 Minor changes:
 * Removed dependency on flare, which is no longer on CRAN.
 
-knockoff 0.3.2 (08/03/2018)
----------------------------------------
+# knockoff 0.3.2 (Release date: 08/03/2018)
+
 Fixes:
 * Fixed bug that caused incorrect knockoff statistics in the presence
   of knockoff copies identical to their own original variable.
@@ -24,8 +29,8 @@ Fixes:
 Minor changes:
 * Changed scaling of variables for computation of importance measures.
 
-knockoff 0.3.1.1 (06/28/2018)
----------------------------------------
+# knockoff 0.3.1.1 (Release date: 06/28/2018)
+
 Minor changes:
 * Improved algorithm for solving SDP
 * Improved algorithm for solving ASDP
@@ -35,8 +40,8 @@ Minor changes:
 Documentation:
 * Minor improvements to package description file
 
-knockoff 0.3.0 (10/17/2017)
----------------------------------------
+# knockoff 0.3.0 (Release date: 10/17/2017)
+
 Features:
 * Added support for Model-X knockoffs
 * Added importance statistics
@@ -51,14 +56,14 @@ Major changes:
 Documentation:
 * Updated and expanded vignettes
 
-knockoff 0.2.1
----------------------------------------
+# knockoff 0.2.1
+
 Documentation:
 * Add vignette showing how to analyze a real data set (on HIV drug resistance),
   including all the preprocessing steps.
 
-knockoff 0.2 (02/04/2015)
----------------------------------------
+# knockoff 0.2 (Release date: 02/04/2015)
+
 Changes:
 * The knockoff procedure is now fully deterministic by default. Randomization 
   can be enabled if desired.
@@ -66,15 +71,15 @@ Changes:
 Fixes:
 * Fix numerical precision bug in equicorrelated knockoff creation
 
-knockoff 0.1.1 (12/19/2014)
----------------------------------------
+# knockoff 0.1.1 (Release date: 12/19/2014)
+
 Features:
-* Expose the optional 'nlambda' parameter for lasso statistics
+* Expose the optional nlambda parameter for lasso statistics
 
 Fixes:
 * Better documentation for SDP knockoffs
 * Minor bug fixes
 
-knockoff 0.1 (12/05/2014)
----------------------------------------
-Initial release!
+# knockoff 0.1 (Release date: 12/05/2014)
+
+Initial release.

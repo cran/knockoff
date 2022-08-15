@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-<meta name="date" content="2022-02-01" />
+<meta name="date" content="2022-08-12" />
 
 <title>Advanced Usage of the Knockoff Filter for R</title>
 
@@ -139,7 +139,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 <h1 class="title toc-ignore">Advanced Usage of the Knockoff Filter for R</h1>
-<h4 class="date">2022-02-01</h4>
+<h4 class="date">2022-08-12</h4>
 
 
 
@@ -156,8 +156,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2>Creating an artificial problem</h2>
 <p>Let us begin by creating some synthetic data. For simplicity, we will use synthetic data constructed from a generalized linear model such that the response only depends on a small fraction of the variables.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem parameters</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">1000</span>         <span class="co"># number of observations</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">1000</span>         <span class="co"># number of variables</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">200</span>         <span class="co"># number of observations</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">200</span>         <span class="co"># number of variables</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>k <span class="ot">=</span> <span class="dv">60</span>           <span class="co"># number of variables with nonzero coefficients</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>amplitude <span class="ot">=</span> <span class="fl">7.5</span>  <span class="co"># signal amplitude (for noise level = 1)</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
@@ -216,7 +216,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  })</span>
 <span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the FDR</span></span>
 <span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(fdp_list)</span></code></pre></div>
-<pre><code>## [1] 0.09537065</code></pre>
+<pre><code>## [1] 0.07268705</code></pre>
 </div>
 <div id="see-also" class="section level2">
 <h2>See also</h2>
